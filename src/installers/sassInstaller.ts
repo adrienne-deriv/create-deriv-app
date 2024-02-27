@@ -1,20 +1,10 @@
-import { cliDir, rootDir } from "../consts";
-import { addDependency } from "./addDependency";
-import fs from "fs-extra";
-import path from "path";
+import { addDependency } from '../utils/addDependency';
 
-export const sassInstaller = (packageDir: string, bundler: string) => {
-  if (bundler === "webpack") {
+export const sassInstaller = (packagePath: string, bundler: string) => {
     addDependency({
-      packageDir,
-      dependency: "sassWebpack",
-      isDevDependency: true,
+        packagePath,
+        dependency: 'sass',
+        isDevDependency: true,
+        bundler,
     });
-  } else {
-    addDependency({
-      packageDir,
-      dependency: "sassVite",
-      isDevDependency: true,
-    });
-  }
 };
