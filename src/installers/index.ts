@@ -6,3 +6,4 @@ export * from './tsupInstaller';
 export * from './viteInstaller';
 export * from './styledComponentsInstaller';
 export * from './derivInstaller';
+export * from './huskyInstaller';

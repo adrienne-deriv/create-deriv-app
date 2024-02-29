@@ -6,22 +6,17 @@ export const addDependency = ({
     packagePath,
     dependency,
     isDevDependency,
-    bundler,
+    scripts,
 }: {
     packagePath: string;
     dependency: string;
     isDevDependency: boolean;
-    bundler?: string;
+    scripts?: Record<string, string>;
 }) => {
     const packageJsonPath = join(packagePath, 'package.json');
     const packageJSON = fs.readJSONSync(packageJsonPath);
 
     let peerDependencies = dependencyVersions[dependency];
-    if (bundler) {
-        if (dependencyVersions[dependency]?.bundlers) {
-            peerDependencies = dependencyVersions[dependency].bundlers[bundler];
-        }
-    }
 
     Object.keys(peerDependencies).forEach(dependency => {
         if (isDevDependency) {
@@ -30,6 +25,10 @@ export const addDependency = ({
             packageJSON.dependencies[dependency] = peerDependencies[dependency];
         }
     });
+
+    if (scripts) {
+        Object.keys(scripts).forEach(command => (packageJSON.scripts[command] = scripts[command]));
+    }
 
     fs.writeJSONSync(packageJsonPath, packageJSON, {
         spaces: 2,

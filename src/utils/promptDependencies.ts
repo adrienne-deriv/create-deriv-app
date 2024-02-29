@@ -12,23 +12,68 @@ const validateName = (name: string) => {
     return;
 };
 
-export const promptDependencies = async () => {
-    const dependencies = await p.group(
+export type LibraryDependencies = {
+    name: string;
+    type: 'library';
+    version: string;
+    description: string;
+    repository?: string;
+};
+
+export type PackageDependencies = {
+    name: string;
+    type: 'package';
+    bundler: 'vite' | 'rsbuild';
+    styling: 'sass' | 'tailwind' | 'styledComponents' | 'cssModules';
+    shouldUseReactQuery: boolean;
+    derivPackages: ('derivUi' | 'derivUtils' | 'derivIcons')[];
+    githubActions: 'buildAndTest'[];
+    shouldBootstrap: boolean;
+};
+
+type Dependencies = LibraryDependencies | PackageDependencies;
+
+export const promptDependencies = async (): Promise<Dependencies> => {
+    const packageName = await p.text({
+        message: 'What is the name of the new V2 package?',
+        validate: validateName,
+    });
+    const isLibrary = await p.confirm({
+        message: 'Is this for a library?',
+        initialValue: false,
+    });
+
+    if (isLibrary) {
+        const description = await p.text({
+            message: 'Provide a short description of the library',
+            validate(value) {
+                if (value.length === 0) return 'A description is required';
+            },
+        });
+        const repositoryUrl = await p.text({
+            message: 'Provide (if any) a Github repository url',
+            initialValue: `https://github.com/binary-com/${packageName.toString()}`,
+        });
+        const initialVersion = await p.text({
+            message: "What's the initial version of this library?",
+            initialValue: '0.0.1-beta',
+        });
+        const libraryDependencies: LibraryDependencies = {
+            name: packageName.toString(),
+            description: description.toString(),
+            repository: repositoryUrl.toString(),
+            version: initialVersion.toString(),
+            type: 'library',
+        };
+
+        return libraryDependencies;
+    }
+    const dependencies = await p.group<PackageDependencies>(
         {
-            name: () =>
-                p.text({
-                    message: 'What is the name of the new V2 package?',
-                    validate: validateName,
-                }),
-            isLibrary: () =>
-                p.confirm({
-                    message: 'Is this for a library?',
-                }),
             bundler: () =>
                 p.select({
                     message: 'Which bundler would you like to integrate?',
                     options: [
-                        { value: 'webpack', label: 'Webpack' },
                         { value: 'vite', label: 'Vite' },
                         { value: 'rsbuild', label: 'Rsbuild' },
                     ],
@@ -38,16 +83,12 @@ export const promptDependencies = async () => {
                 p.select({
                     message: 'Which styling library will you be using?',
                     options: [
-                        { value: 'tailwind', label: 'Tailwind' },
-                        { value: 'sass', label: 'Sass' },
+                        { value: 'tailwind', label: 'Tailwind', hint: 'includes twMerge and clsx' },
+                        { value: 'sass', label: 'Sass', hint: 'includes clsx' },
                         { value: 'styledComponents', label: 'Styled Components' },
                         { value: 'cssModules', label: 'CSS Modules' },
                     ],
                     initialValue: 'tailwind',
-                }),
-            shouldUseReactQuery: () =>
-                p.confirm({
-                    message: 'Should React Query be integrated? (I dont think we need this once deriv-api-v2 is out)',
                 }),
             derivPackages: () =>
                 p.multiselect({
@@ -61,15 +102,12 @@ export const promptDependencies = async () => {
             githubActions: () =>
                 p.multiselect({
                     message: 'Which Github actions should be included?',
-                    options: [{ value: 'GABuildAndTest', label: 'Build and Test' }],
+                    options: [{ value: 'buildAndTest', label: 'Build and Test' }],
                 }),
-            shouldUseHusky: () =>
-                p.confirm({
-                    message: 'Should precommit hooks be included?',
-                }),
-            git: () => {
+            shouldBootstrap: () => {
                 return p.confirm({
-                    message: 'Should we initialize a Git repository and stage the changes?',
+                    message: 'Should we initialize a Git repository and bootstrap the package?',
+                    initialValue: false,
                 });
             },
         },
@@ -78,7 +116,11 @@ export const promptDependencies = async () => {
         }
     );
 
-    info(`Creating ${dependencies.name} package...`);
+    const packageDependencies: PackageDependencies = {
+        name: packageName.toString(),
+        type: 'package',
+        ...dependencies,
+    };
 
-    return dependencies;
+    return packageDependencies;
 };
