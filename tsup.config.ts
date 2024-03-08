@@ -5,7 +5,7 @@ import fs from 'fs-extra';
 
 const copyTemplatesToBin = async () => {
     const templatePath = join(__dirname, 'src/templates');
-    fs.copySync(templatePath, './bin/src/templates', {
+    fs.copySync(templatePath, './bin/templates', {
         overwrite: true,
     });
     execSync('node bin/index.js');
