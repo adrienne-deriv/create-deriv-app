@@ -2,7 +2,9 @@
     "compilerOptions": {
       "baseUrl": "./",
       "esModuleInterop": true,
-      "types": ["node"]
+      "types": ["node"],
+      "moduleResolution": "node",
+      "outDir": "bin"
     },
     "include": ["src", "tsup.config.ts"],
     "exclude": ["src/templates"]

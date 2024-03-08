@@ -1,6 +1,4 @@
-import fs from 'fs-extra';
-import { join } from 'path';
-import { rootPath, templatesPath, configurePackageJSON, copyTemplates } from '../utils';
+import { configurePackageJSON, copyTemplates } from '../utils';
 import { eslintInstaller } from './eslintInstaller';
 import { huskyInstaller } from './huskyInstaller';
 import { jestInstaller } from './jestInstaller';

@@ -1,6 +1,4 @@
-import { templatesPath } from '../utils/consts';
 import { configurePackageJSON } from '../utils/configurePackageJSON';
-import fs from 'fs-extra';
 import { join } from 'path';
 import { copyTemplates } from 'src/utils';
 

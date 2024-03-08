@@ -43,11 +43,10 @@ const printCommands = (packageName: string, dependencies: LibraryDependencies | 
     );
 
     if (dependencies.type === 'library') {
-        info(chalk.bold('To commit and publish for a pre-release version:'));
+        info(chalk.bold('To commit and publish for a pre-release version (e.g. 1.0.0-development.1):'));
         info(
             boxen(
                 listCommands([
-                    `git remote add upstream git@github.com:${dependencies.organizationName}/${dependencies.repositoryName}.git`,
                     'git checkout -b development',
                     'git add .',
                     'git commit -m "feat: initialized repository for library"',
@@ -73,7 +72,7 @@ const main = async () => {
 
     if (dependencies.type === 'library') {
         tsupInstaller(packageName, dependencies);
-        if (dependencies.shouldBootstrap) await preparePackage(packageName, true);
+        if (dependencies.shouldBootstrap) await preparePackage(packageName, dependencies);
         printCommands(packageName, dependencies);
 
         return;
@@ -117,7 +116,7 @@ const main = async () => {
     //     await aliasInstaller(packageName, dependencies.bundler, dependencies.aliases, dependencies.folders);
     // }
 
-    if (dependencies.shouldBootstrap) await preparePackage(packageName);
+    if (dependencies.shouldBootstrap) await preparePackage(packageName, dependencies);
 
     printCommands(packageName, dependencies);
 };
