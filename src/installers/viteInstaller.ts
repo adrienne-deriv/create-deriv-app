@@ -1,14 +1,20 @@
 import fs from 'fs-extra';
 import { join } from 'path';
-import { rootPath, templatesPath } from '../utils/consts';
+import { rootPath, templatesPath, configurePackageJSON, copyTemplates } from '../utils';
 import { eslintInstaller } from './eslintInstaller';
 import { huskyInstaller } from './huskyInstaller';
+import { jestInstaller } from './jestInstaller';
 
 export const viteInstaller = (packagePath: string) => {
-    const viteTemplatePath = join(templatesPath, 'vite');
-    const destinationPath = join(rootPath, packagePath) + '/';
-    fs.copySync(viteTemplatePath, destinationPath);
+    copyTemplates(packagePath, 'vite');
+    copyTemplates(packagePath, 'actions');
 
-    eslintInstaller(packagePath);
+    eslintInstaller(packagePath, false);
     huskyInstaller(packagePath);
+    jestInstaller(packagePath);
+
+    configurePackageJSON({
+        packagePath,
+        name: packagePath,
+    });
 };

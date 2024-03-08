@@ -1,14 +1,17 @@
-import fs from 'fs-extra';
-import { join } from 'path';
-import { rootPath, templatesPath } from '../utils/consts';
 import { eslintInstaller } from './eslintInstaller';
 import { huskyInstaller } from './huskyInstaller';
+import { configurePackageJSON, copyTemplates } from 'src/utils';
+import { jestInstaller } from './jestInstaller';
 
 export const rsbuildInstaller = (packagePath: string) => {
-    const rsbuildTemplatePath = join(templatesPath, 'rsbuild');
-    const destinationPath = join(rootPath, packagePath) + '/';
-    fs.copySync(rsbuildTemplatePath, destinationPath);
+    copyTemplates(packagePath, 'rsbuild');
+    copyTemplates(packagePath, 'actions');
 
-    eslintInstaller(packagePath);
+    eslintInstaller(packagePath, false);
     huskyInstaller(packagePath);
+    jestInstaller(packagePath);
+    configurePackageJSON({
+        packagePath,
+        name: packagePath,
+    });
 };

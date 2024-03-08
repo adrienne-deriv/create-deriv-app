@@ -12,14 +12,58 @@ import {
     initializePackageFolder,
     promptDependencies,
     info,
-    getCloudflarePagesSteps,
     preparePackage,
+    LibraryDependencies,
+    PackageDependencies,
 } from './utils';
 import gradient from 'gradient-string';
-import { outro } from '@clack/prompts';
+import chalk from 'chalk';
+import boxen from 'boxen';
+import { aliasInstaller } from './installers/aliasInstaller';
+import { folderInstaller } from './installers/folderInstaller';
+
+const printCommands = (packageName: string, dependencies: LibraryDependencies | PackageDependencies) => {
+    const listCommands = (commands: string[]) => commands.map(command => chalk.bold('➜') + `  ${command}`).join('\n');
+    const bootstrapCmds = listCommands(['git init', 'npm install', 'npm run prepare']);
+
+    info(chalk.bold(`Navigate to ${packageName} folder and run the following commands:`));
+    info(
+        boxen(chalk.bold('➜') + `  cd ${packageName}\n` + (!dependencies.shouldBootstrap ? bootstrapCmds : ''), {
+            padding: 2,
+            borderStyle: 'none',
+        })
+    );
+
+    info(chalk.bold('To start the development server:'));
+    info(
+        boxen(chalk.bold('➜') + '  npm run dev', {
+            padding: 2,
+            borderStyle: 'none',
+        })
+    );
+
+    if (dependencies.type === 'library') {
+        info(chalk.bold('To commit and publish for a pre-release version:'));
+        info(
+            boxen(
+                listCommands([
+                    `git remote add upstream git@github.com:${dependencies.organizationName}/${dependencies.repositoryName}.git`,
+                    'git checkout -b development',
+                    'git add .',
+                    'git commit -m "feat: initialized repository for library"',
+                    'git push upstream development',
+                ]),
+                {
+                    padding: 2,
+                    borderStyle: 'none',
+                }
+            )
+        );
+    }
+};
 
 const main = async () => {
-    const derivGradient = gradient('red', 'red');
+    const derivGradient = gradient('#b62020', '#fe8181');
     console.log(derivGradient.multiline(BANNER));
     console.log('\n');
     const dependencies = await promptDependencies();
@@ -29,6 +73,9 @@ const main = async () => {
 
     if (dependencies.type === 'library') {
         tsupInstaller(packageName, dependencies);
+        if (dependencies.shouldBootstrap) await preparePackage(packageName, true);
+        printCommands(packageName, dependencies);
+
         return;
     }
 
@@ -48,7 +95,7 @@ const main = async () => {
             tailwindInstaller(packageName);
             break;
         case 'sass':
-            sassInstaller(packageName, dependencies);
+            sassInstaller(packageName);
             break;
         case 'styledComponents':
             styledComponentsInstaller(packageName);
@@ -61,21 +108,18 @@ const main = async () => {
         derivInstaller(packageName, dependencies.derivPackages);
     }
 
-    // if (dependencies.githubActions.length) {
-    //     if (dependencies.githubActions.includes('buildAndTest')) {
-    //         warn(getCloudflarePagesSteps(packageName));
-    //     }
+    if (dependencies.folders) {
+        folderInstaller(packageName, dependencies.folders);
+    }
+
+    // TODO: Improve this later
+    // if (dependencies.aliases) {
+    //     await aliasInstaller(packageName, dependencies.bundler, dependencies.aliases, dependencies.folders);
     // }
+
     if (dependencies.shouldBootstrap) await preparePackage(packageName);
 
-    outro(`Successfully initialized package! Navigate to ${packageName} folder and run the following commands:`);
-    info(`  cd ${packageName}`);
-    if (!dependencies.shouldBootstrap) {
-        info('  git init');
-        info('  npm install');
-        info('  npm run prepare');
-    }
-    info('  npm run dev');
+    printCommands(packageName, dependencies);
 };
 
 main();

@@ -1,22 +1,29 @@
-import fs from 'fs-extra';
-import path, { join } from 'path';
-import { rootPath, templatesPath } from '../utils/consts';
-import { LibraryDependencies } from 'src/utils';
-import { loadPackageJSON } from 'src/loaders';
+import { LibraryDependencies, configurePackageJSON, copyTemplates } from 'src/utils';
+import { eslintInstaller } from './eslintInstaller';
+import { huskyInstaller } from './huskyInstaller';
+import configureReleaseConfig from '../utils/configureReleaseConfig';
 
 export const tsupInstaller = (packagePath: string, libraryDependencies: LibraryDependencies) => {
-    const tsupTemplatePath = join(templatesPath, 'tsup');
-    const destinationPath = join(rootPath, packagePath) + '/';
-    fs.copySync(tsupTemplatePath, destinationPath);
+    copyTemplates(packagePath, 'tsup');
 
-    const packageJSON = loadPackageJSON(packagePath);
-    packageJSON.name = libraryDependencies.name;
-    packageJSON.description = libraryDependencies.description;
-    packageJSON.repository = libraryDependencies.repository;
-    packageJSON.version = libraryDependencies.version;
+    eslintInstaller(packagePath, true);
+    huskyInstaller(packagePath);
 
-    const packageJSONPath = path.join(destinationPath, 'package.json');
-    fs.writeJSONSync(packageJSONPath, packageJSON, {
-        spaces: 2,
+    configureReleaseConfig({
+        packagePath,
+        organizationName: libraryDependencies.organizationName,
+    });
+
+    configurePackageJSON({
+        packagePath,
+        name: libraryDependencies.name,
+        description: libraryDependencies.description,
+        repositoryUrl: libraryDependencies.repository,
+        devDependencies: {
+            '@semantic-release/changelog': '^6.0.3',
+            '@semantic-release/github': '^9.2.6',
+            '@semantic-release/npm': '^11.0.3',
+            '@semantic-release/release-notes-generator': '^12.1.0',
+        },
     });
 };

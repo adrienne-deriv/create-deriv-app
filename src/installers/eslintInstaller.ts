@@ -1,27 +1,29 @@
-import { join } from 'path';
-import { templatesPath, rootPath } from 'src/utils/consts';
-import { addDependency } from '../utils/addDependency';
-import fs from 'fs-extra';
-import path from 'path';
+import { configurePackageJSON, copyTemplates } from '../utils';
 
-export const eslintInstaller = (packagePath: string) => {
-    const eslintTemplatePath = join(templatesPath, 'linting');
+export const eslintInstaller = (packagePath: string, isLibrary: boolean) => {
+    copyTemplates(packagePath, isLibrary ? 'libraryLinters' : 'linters');
 
-    const destinationPath = path.join(rootPath, packagePath) + '/';
-    fs.copySync(eslintTemplatePath, destinationPath, {
-        overwrite: true,
-    });
-    fs.copySync(eslintTemplatePath, destinationPath, {
-        overwrite: true,
-    });
-
-    addDependency({
+    configurePackageJSON({
         packagePath,
-        dependency: 'linting',
-        isDevDependency: true,
+        devDependencies: isLibrary
+            ? {
+                  '@deriv-com/eslint-config-deriv': '^2.1.0-beta.3',
+                  'eslint-plugin-prettier': '^5.0.0',
+                  prettier: '^3.1.0',
+              }
+            : {
+                  '@deriv-com/eslint-config-deriv': '^2.1.0-beta.3',
+                  'eslint-plugin-prettier': '^5.0.0',
+                  stylelint: '^13.13.1',
+                  'stylelint-config-prettier': '^8.0.2',
+                  'stylelint-formatter-pretty': '^2.1.1',
+                  'stylelint-no-unsupported-browser-features': '^4.0.0',
+                  'stylelint-selector-bem-pattern': '^2.1.0',
+                  prettier: '^3.1.0',
+              },
+
         scripts: {
-            lint: 'eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0',
-            'test:eslint': 'eslint "./src/**/*.?(js|jsx|ts|tsx)"',
+            'test:lint': 'prettier --log-level silent --write . && eslint "./src/**/*.?(js|jsx|ts|tsx)"',
         },
     });
 };

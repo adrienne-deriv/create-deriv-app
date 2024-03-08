@@ -1,18 +1,24 @@
 import { templatesPath } from '../utils/consts';
-import { addDependency } from '../utils/addDependency';
+import { configurePackageJSON } from '../utils/configurePackageJSON';
 import fs from 'fs-extra';
 import { join } from 'path';
+import { copyTemplates } from 'src/utils';
 
 export const tailwindInstaller = (packagePath: string) => {
-    addDependency({
+    configurePackageJSON({
         packagePath,
-        dependency: 'tailwind',
-        isDevDependency: true,
+        dependencies: {
+            clsx: '^2.1.0',
+            'tailwind-merge': '^2.2.1',
+        },
+        devDependencies: {
+            tailwindcss: '^3.3.5',
+            autoprefixer: '^10.4.14',
+            postcss: '^8.4.31',
+            prettier: '^3.1.0',
+            'prettier-plugin-tailwindcss': '^0.5.7',
+        },
     });
 
-    const tailwindTemplatePath = join(templatesPath, 'tailwind');
-
-    fs.copySync(tailwindTemplatePath, packagePath, {
-        overwrite: true,
-    });
+    copyTemplates(packagePath, 'tailwind');
 };

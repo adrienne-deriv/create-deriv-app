@@ -1,9 +1,10 @@
-import { addDependency } from '../utils/addDependency';
+import { configurePackageJSON } from '../utils/configurePackageJSON';
 
 export const styledComponentsInstaller = (packagePath: string) => {
-    addDependency({
+    configurePackageJSON({
         packagePath,
-        dependency: 'styledComponents',
-        isDevDependency: false,
+        dependencies: {
+            'styled-components': '^6.1.8',
+        },
     });
 };

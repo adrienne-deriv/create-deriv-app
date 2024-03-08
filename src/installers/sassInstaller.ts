@@ -1,10 +1,13 @@
-import { PackageDependencies } from 'src/utils';
-import { addDependency } from '../utils/addDependency';
+import { configurePackageJSON } from '../utils';
 
-export const sassInstaller = (packagePath: string, packageDependencies: PackageDependencies) => {
-    addDependency({
+export const sassInstaller = (packagePath: string) => {
+    configurePackageJSON({
         packagePath,
-        dependency: 'sass',
-        isDevDependency: true,
+        dependencies: {
+            clsx: '^2.1.0',
+        },
+        devDependencies: {
+            sass: '^1.70.0',
+        },
     });
 };
