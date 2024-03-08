@@ -31,13 +31,14 @@
     "author": "Adrienne Rio",
     "license": "ISC",
     "devDependencies": {
-        "@types/node": "^20.11.10",
-        "tsup": "^8.0.1",
-        "typescript": "^5.3.3",
         "@semantic-release/changelog": "^6.0.3",
         "@semantic-release/github": "^9.2.6",
         "@semantic-release/npm": "^11.0.3",
-        "@semantic-release/release-notes-generator": "^12.1.0"
+        "@semantic-release/release-notes-generator": "^12.1.0",
+        "@types/node": "^20.11.10",
+        "tiny-glob": "^0.2.9",
+        "tsup": "^8.0.1",
+        "typescript": "^5.3.3"
     },
     "dependencies": {
         "@babel/generator": "^7.23.6",

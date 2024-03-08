@@ -8,5 +8,5 @@
       "sourceMap": true
     },
     "include": ["src", "tsup.config.ts"],
-    "exclude": ["src/templates", "node_modules"]
+    "exclude": ["node_modules"]
 }
