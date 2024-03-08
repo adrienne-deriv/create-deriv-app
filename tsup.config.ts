@@ -8,7 +8,7 @@ export default defineConfig({
     format: ['esm', 'cjs'],
     // minify: !isDev,
     target: 'esnext',
-    outDir: 'dist',
-    onSuccess: isDev ? 'node dist/index.js' : undefined,
+    outDir: 'bin',
+    onSuccess: isDev ? 'node bin/index.js' : undefined,
     sourcemap: true,
 });

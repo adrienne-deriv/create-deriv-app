@@ -10,7 +10,7 @@ module.exports = {
         { name: 'alpha', prerelease: true },
         { name: 'development', prerelease: true },
     ],
-    repositoryUrl: 'git@github.com:adrienne-deriv/create-deriv-app.git',
+    repositoryUrl: 'git@github.com:adrienne-deriv/create-deriv-app-test.git',
 
     plugins: [
         [
