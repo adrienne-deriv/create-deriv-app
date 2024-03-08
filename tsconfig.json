@@ -4,8 +4,9 @@
       "esModuleInterop": true,
       "types": ["node"],
       "moduleResolution": "node",
-      "outDir": "bin"
+      "outDir": "bin",
+      "sourceMap": true
     },
     "include": ["src", "tsup.config.ts"],
-    "exclude": ["src/templates"]
+    "exclude": ["src/templates", "node_modules"]
 }

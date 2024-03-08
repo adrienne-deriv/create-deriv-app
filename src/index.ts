@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import {
     derivInstaller,
     rsbuildInstaller,
@@ -19,8 +21,8 @@ import {
 import gradient from 'gradient-string';
 import chalk from 'chalk';
 import boxen from 'boxen';
-import { aliasInstaller } from './installers/aliasInstaller';
 import { folderInstaller } from './installers/folderInstaller';
+import { error } from './utils';
 
 const printCommands = (packageName: string, dependencies: LibraryDependencies | PackageDependencies) => {
     const listCommands = (commands: string[]) => commands.map(command => chalk.bold('➜') + `  ${command}`).join('\n');
@@ -121,4 +123,13 @@ const main = async () => {
     printCommands(packageName, dependencies);
 };
 
-main();
+main().catch(err => {
+    error('Aborting installation...');
+    if (err instanceof Error) {
+        error(err.message);
+    } else {
+        error('An unknown error has occurred:');
+        console.log(err);
+    }
+    process.exit(1);
+});

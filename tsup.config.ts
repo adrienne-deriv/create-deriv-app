@@ -5,8 +5,8 @@ const isDev = process.env.npm_lifecycle_event === 'dev';
 export default defineConfig({
     clean: true,
     entry: ['src/index.ts'],
-    format: ['esm', 'cjs'],
-    // minify: !isDev,
+    format: ['esm'],
+    minify: !isDev,
     target: 'esnext',
     outDir: 'bin',
     onSuccess: isDev ? 'node bin/index.js' : undefined,
