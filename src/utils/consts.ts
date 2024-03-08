@@ -7,8 +7,9 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const distPath = path.dirname(__filename);
 
+const isDev = process.env.npm_lifecycle_event === 'dev';
 export const rootPath = process.cwd();
-export const cliPath = path.join(distPath, '../src');
+export const cliPath = path.join(distPath, isDev ? '../src' : '../bin');
 export const templatesPath = path.join(cliPath, 'templates');
 
 export const BANNER = [
