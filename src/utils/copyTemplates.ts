@@ -8,4 +8,9 @@ export function copyTemplates(packagePath: string, templateName: string) {
     fs.copySync(templatePath, destinationPath, {
         overwrite: true,
     });
+
+    // gitignore files are being excluded by tarball during npm pack
+    if (fs.existsSync(join(destinationPath, 'gitignore'))) {
+        fs.renameSync(join(destinationPath, 'gitignore'), join(destinationPath, '.gitignore'));
+    }
 }

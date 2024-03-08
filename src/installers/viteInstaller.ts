@@ -2,6 +2,7 @@ import { configurePackageJSON, copyTemplates } from '../utils';
 import { eslintInstaller } from './eslintInstaller';
 import { huskyInstaller } from './huskyInstaller';
 import { jestInstaller } from './jestInstaller';
+import fs from 'fs-extra';
 
 export const viteInstaller = (packagePath: string) => {
     copyTemplates(packagePath, 'vite');
