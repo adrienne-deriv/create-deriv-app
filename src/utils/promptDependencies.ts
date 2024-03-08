@@ -38,7 +38,7 @@ type Dependencies = LibraryDependencies | PackageDependencies;
 
 export const promptDependencies = async (): Promise<Dependencies> => {
     const packageName = await p.text({
-        message: 'What is the name of the new V2 package? (should be the same name as the Github repository)',
+        message: 'What is the name of the new V2 package?',
         validate: validateName,
     });
     const isLibrary = await p.confirm({
@@ -61,6 +61,7 @@ export const promptDependencies = async (): Promise<Dependencies> => {
             message: `Provide the Github repository name for the library (found at https://github.com/${organizationName.toString()}/<REPOSITORY_NAME>)`,
             validate(value) {
                 if (value.length === 0) return 'A repository name is required';
+                if (/[A-Z]/.test(value)) return 'Repository name should not contain uppercases';
             },
         });
         const repositoryUrl = `https://github.com/${organizationName}/${packageName.toString()}`;

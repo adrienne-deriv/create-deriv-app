@@ -19,6 +19,9 @@
     "files": [
         "bin",
         "bin/templates/**/.gitignore",
+        "README.md",
+        "LICENSE",
+        "CHANGELOG.md",
         "package.json"
     ],
     "scripts": {
@@ -30,7 +33,7 @@
     },
     "keywords": [],
     "author": "Adrienne Rio",
-    "license": "ISC",
+    "license": "MIT",
     "devDependencies": {
         "@semantic-release/changelog": "^6.0.3",
         "@semantic-release/github": "^9.2.6",
